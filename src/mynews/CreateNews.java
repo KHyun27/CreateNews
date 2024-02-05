@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.Optional;
 
@@ -40,13 +42,13 @@ public class CreateNews {
             for (Article article : newsClient.getMyNews().getArticles()) {
                 long sourceId = newsDB.querySourceId(article.getSource().getName());
 
-                String sql = String.format("insert into article(author, title, description, url, urlToImage, publishedAt, country_id, category_id, source_id) " +
+                String sql = String.format("insert into article(author, title, description, url, url_to_image, published_at, country_id, category_id, source_id) " +
                                 "values('%s','%s','%s','%s','%s',str_to_date('%s','%%Y-%%m-%%dT%%H:%%i:%%sZ'),%d,%d,%d);",
                         Optional.ofNullable(article.getAuthor()).orElse("").replace("'", "\\'"),
                         Optional.ofNullable(article.getTitle()).orElse("").replace("'", "\\'"),
                         Optional.ofNullable(article.getDescription()).orElse("").replace("'", "\\'"),
-                        article.getUrl(),
-                        article.getUrlToImage(),
+                        URLEncoder.encode(article.getUrl(), StandardCharsets.UTF_8),
+                        URLEncoder.encode(article.getUrlToImage(), StandardCharsets.UTF_8),
                         article.getPublishedAt(),
                         countryId,
                         categoryId,
